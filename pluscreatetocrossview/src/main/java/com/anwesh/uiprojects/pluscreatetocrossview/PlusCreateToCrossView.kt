@@ -21,6 +21,7 @@ val foreColor : Int = Color.parseColor("#4CAF50")
 val backColor : Int = Color.parseColor("#BDBDBD")
 val delay : Long = 20
 val deg : Float = 45f
+val scDiv : Double = 1.0 / lines
 
 fun Int.inverse() : Float = 1f / this
 fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n.inverse())
@@ -39,7 +40,7 @@ fun Canvas.drawPlusCreateLineToCross(scale : Float, size : Float, paint : Paint)
     val sf : Float = scale.sinify()
     val sf1 = sf.divideScale(0, 2)
     val sf2 : Float = sf.divideScale(1, 2)
-    val scDiv : Double = 1.0 / lines
+
     val k : Int = Math.floor(sf1 / scDiv).toInt()
     save()
     rotate(deg * sf2)
@@ -84,7 +85,10 @@ class PlusCreateToCrossView(ctx : Context) : View(ctx) {
     data class State(var scale : Float = 0f, var dir : Float = 0f, var prevScale : Float = 0f) {
 
         fun update(cb : (Float) -> Unit) {
-            scale += scGap * dir
+            var scDiv1 : Double = 1.0 / 2
+            val k : Int = Math.floor(scale.sinify() / scDiv1).toInt()
+            val factor : Int = lines * (1 - k) + k
+            scale += (scGap / factor) * dir
             if (Math.abs(scale - prevScale) > 1) {
                 scale = prevScale + dir
                 dir = 0f

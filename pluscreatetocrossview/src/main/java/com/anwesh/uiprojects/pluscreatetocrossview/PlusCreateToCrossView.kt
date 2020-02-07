@@ -49,7 +49,7 @@ fun Canvas.drawPlusCreateLineToCross(scale : Float, size : Float, paint : Paint)
     restore()
 }
 
-fun Canvas.drawPCCNode(scale : Float, i : Int, paint : Paint) {
+fun Canvas.drawPCCNode(i : Int, scale : Float, paint : Paint) {
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
     val gap : Float = w / (nodes + 1)
@@ -125,6 +125,48 @@ class PlusCreateToCrossView(ctx : Context) : View(ctx) {
             if (animated) {
                 animated = false
             }
+        }
+    }
+
+    data class PCCNode(var i : Int, val state : State = State()) {
+
+        private var prev : PCCNode? = null
+        private var next : PCCNode? = null
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < nodes - 1) {
+                next = PCCNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.drawPCCNode(i, state.scale, paint)
+            next?.draw(canvas, paint)
+        }
+
+        fun update(cb : (Float) -> Unit) {
+            state.update(cb)
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            state.startUpdating(cb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : PCCNode {
+            var curr : PCCNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
         }
     }
 }

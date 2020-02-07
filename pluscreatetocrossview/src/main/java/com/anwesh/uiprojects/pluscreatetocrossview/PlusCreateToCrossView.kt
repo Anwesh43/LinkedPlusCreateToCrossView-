@@ -216,4 +216,12 @@ class PlusCreateToCrossView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+        fun create(activity : Activity) : PlusCreateToCrossView {
+            val view : PlusCreateToCrossView = PlusCreateToCrossView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }

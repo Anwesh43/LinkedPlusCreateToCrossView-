@@ -193,4 +193,26 @@ class PlusCreateToCrossView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : PlusCreateToCrossView) {
+
+        private val animator : Animator = Animator(view)
+        private val pcc : PlusCreateToCross = PlusCreateToCross(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            pcc.draw(canvas, paint)
+            animator.animate {
+                pcc.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            pcc.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
